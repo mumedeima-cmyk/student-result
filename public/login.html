@@ -4,9 +4,19 @@
 <title>Teacher Login</title><link rel="stylesheet" href="style.css"></head>
 <body><div class="container"><h1>Teacher Login</h1>
 <form id="f"><label>Username</label><input id="u" required>
-<label>Password</label><input id="p" type="password" required>
+<label>Password</label>
+<div style="position:relative">
+<input id="p" type="password" required style="padding-right:55px">
+<button type="button" id="eye" title="Show or hide password" style="position:absolute;right:6px;top:11px;width:auto;margin:0;padding:4px 10px;cursor:pointer;background:none;border:none;font-size:20px">👁</button>
+</div>
 <button type="submit">Log in</button></form><p id="msg"></p></div>
 <script>
+document.getElementById("eye").onclick = () => {
+  const p = document.getElementById("p");
+  const show = p.type === "password";
+  p.type = show ? "text" : "password";
+  document.getElementById("eye").textContent = show ? "🙈" : "👁";
+};
 document.getElementById("f").addEventListener("submit", async e => {
   e.preventDefault();
   const r = await fetch("/api/login", { method: "POST", headers: { "Content-Type": "application/json" },

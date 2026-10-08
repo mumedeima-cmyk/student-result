@@ -146,3 +146,6 @@ $("addTeacherBtn").onclick = async () => {
   $("teacherMsg").textContent = r.ok ? "Teacher added" : d.error;
   if (r.ok) { $("newUser").value = ""; $("newPass").value = ""; }
 };
+$("newPass").insertAdjacentHTML("afterend",
+  '<label style="font-size:13px"><input type="checkbox" id="showNew" style="width:auto"> Show password</label>');
+$("showNew").onchange = () => { $("newPass").type = $("showNew").checked ? "text" : "password"; };
