@@ -1,6 +1,7 @@
 const $ = id => document.getElementById(id);
 const J = { "Content-Type": "application/json" };
 let subjects = [];
+let allStudents = [];
 
 const traits = ["Punctuality","Responsibility","Diligence","Self-Control","Neatness","Honesty","Attendance","Initiative","Ability","Attentiveness","Co-operation","Curiosity","Creativity","Perseverance"];
 const motor = ["Legibility","Dexterity","Handling of Tools","Accuracy","Sport & Games","Physical/Painting","Drawing/Painting"];
@@ -25,6 +26,54 @@ async function loadSubjects() {
       <td><input type="number" id="t2-${s.id}" min="0" max="20" required></td>
       <td><input type="number" id="ex-${s.id}" min="0" max="60" required></td></tr>`).join("") + `</table>`;
 }
+
+async function loadStudents(keepClass, keepId) {
+  allStudents = await (await fetch("/api/students")).json();
+  const classes = [...new Set(allStudents.map(s => s.class_name))].sort();
+  $("classPick").innerHTML = `<option value="">-- New class / new student --</option>` +
+    classes.map(c => `<option>${c}</option>`).join("");
+  if (keepClass) $("classPick").value = keepClass;
+  fillStudents(keepId);
+}
+
+function fillStudents(keepId) {
+  const c = $("classPick").value;
+  const list = allStudents.filter(s => s.class_name === c);
+  $("studentPick").innerHTML = `<option value="">-- New student --</option>` +
+    list.map(s => `<option value="${s.id}">${s.name}</option>`).join("");
+  if (keepId) $("studentPick").value = keepId;
+}
+
+function clearForm() {
+  ["studentName", "admissionNumber", "age", "house"].forEach(i => $(i).value = "");
+  subjects.forEach(s => { $("t1-" + s.id).value = ""; $("t2-" + s.id).value = ""; $("ex-" + s.id).value = ""; });
+  $("result").innerHTML = "";
+}
+
+$("classPick").addEventListener("change", () => {
+  fillStudents();
+  clearForm();
+  $("className").value = $("classPick").value;
+});
+
+$("studentPick").addEventListener("change", async () => {
+  const id = $("studentPick").value;
+  clearForm();
+  if (!id) { $("className").value = $("classPick").value; return; }
+  const st = allStudents.find(s => String(s.id) === id);
+  $("studentName").value = st.name;
+  $("admissionNumber").value = st.admission_number;
+  $("className").value = st.class_name;
+  if (st.gender) $("sex").value = st.gender;
+  const rep = await (await fetch("/api/report/" + id)).json();
+  rep.subjects.forEach(r => {
+    const s = subjects.find(x => x.name === r.subject);
+    if (!s) return;
+    $("t1-" + s.id).value = Number(r.test1_score);
+    $("t2-" + s.id).value = Number(r.test2_score);
+    $("ex-" + s.id).value = Number(r.exam_score);
+  });
+});
 
 $("resultForm").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -75,9 +124,10 @@ $("resultForm").addEventListener("submit", async (e) => {
       <p>Class Teacher's Remark: ______________________________</p>
       <p>Proprietress Remark: ______________________________</p>
     </div>`;
+    loadStudents(st.class_name, st.id);
   } catch (err) {
     out.textContent = "Error: " + err.message;
   }
 });
 
-loadSubjects();
+loadSubjects().then(() => loadStudents());
