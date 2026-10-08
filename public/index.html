@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container">
+<div class="container"><div class="noprint"><span id="who"></span><button id="logoutBtn" type="button">Log out</button><details id="adminBox" style="display:none"><summary>Add teacher (admin)</summary><input id="newUser" placeholder="Username"><input id="newPass" type="password" placeholder="Password (6+ characters)"><button id="addTeacherBtn" type="button">Add teacher</button><p id="teacherMsg"></p></details></div>
 <form id="resultForm" class="noprint">
 <h1>Enter Student Marks</h1><label>Select Class</label><select id="classPick"></select><label>Select Student</label><select id="studentPick"></select>
 <label>Name (Surname First)</label><input id="studentName" required>

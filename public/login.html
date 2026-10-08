@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teacher Login</title><link rel="stylesheet" href="style.css"></head>
+<body><div class="container"><h1>Teacher Login</h1>
+<form id="f"><label>Username</label><input id="u" required>
+<label>Password</label><input id="p" type="password" required>
+<button type="submit">Log in</button></form><p id="msg"></p></div>
+<script>
+document.getElementById("f").addEventListener("submit", async e => {
+  e.preventDefault();
+  const r = await fetch("/api/login", { method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username: document.getElementById("u").value, password: document.getElementById("p").value }) });
+  const d = await r.json();
+  if (r.ok) location.href = "/"; else document.getElementById("msg").textContent = d.error;
+});
+</script></body></html>

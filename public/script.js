@@ -131,3 +131,18 @@ $("resultForm").addEventListener("submit", async (e) => {
 });
 
 loadSubjects().then(() => loadStudents());
+(async () => {
+  const r = await fetch("/api/me");
+  if (!r.ok) { location.href = "/login.html"; return; }
+  const me = await r.json();
+  $("who").textContent = "Logged in as " + me.username;
+  if (me.role === "admin") $("adminBox").style.display = "block";
+})();
+$("logoutBtn").onclick = async () => { await fetch("/api/logout", { method: "POST" }); location.href = "/login.html"; };
+$("addTeacherBtn").onclick = async () => {
+  const r = await fetch("/api/users", { method: "POST", headers: J,
+    body: JSON.stringify({ username: $("newUser").value, password: $("newPass").value }) });
+  const d = await r.json();
+  $("teacherMsg").textContent = r.ok ? "Teacher added" : d.error;
+  if (r.ok) { $("newUser").value = ""; $("newPass").value = ""; }
+};
