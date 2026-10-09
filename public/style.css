@@ -56,3 +56,10 @@ td:first-child, th:first-child { text-align: left; }
   .noprint { display: none; }
   body { background: #fff; padding: 0; }
 }
+.cardwrap { overflow-x: auto; }
+.rc { display: grid; grid-template-columns: 1.8fr 1fr; gap: 10px; align-items: start; min-width: 720px; }
+.rc h4 { margin: 6px 0 2px; }
+.rc th, .rc td { font-size: 11px; padding: 3px; }
+.sbox, .kbox { border: 1px solid #333; padding: 8px; font-size: 12px; }
+.sbox p, .kbox p { margin: 6px 0; }
+@media print { .cardwrap { overflow: visible; } .rc { min-width: 0; } }

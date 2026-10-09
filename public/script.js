@@ -102,28 +102,7 @@ $("resultForm").addEventListener("submit", async (e) => {
     const total = rep.subjects.reduce((a, r) => a + Number(r.total), 0);
     const avg = total / rep.subjects.length;
 
-    out.innerHTML = `
-    <button class="noprint" onclick="window.print()">Print / Save as PDF</button>
-    <div class="card">
-      <h2>NNERO FOUNDATION ACADEMY</h2>
-      <p class="c">Nikton Road, Opposite Redeemed Christian Church by Express Kpansia, Yenagoa Bayelsa State.</p>
-      <h3 class="c">CONTINUOUS ASSESSMENT REPORT FOR JUNIOR SECONDARY SCHOOL</h3>
-      <p><b>Name:</b> ${st.name} &nbsp; <b>House:</b> ${$("house").value}</p>
-      <p><b>Admission No:</b> ${st.admission_number} &nbsp; <b>Sex:</b> ${$("sex").value} &nbsp; <b>Age:</b> ${$("age").value}</p>
-      <p><b>Class:</b> ${st.class_name} &nbsp; <b>Year:</b> ${$("year").value}</p>
-      <p><b>Next Term Begins:</b> ${$("nextBegins").value} &nbsp; <b>Ends:</b> ${$("nextEnds").value}</p>
-      <h4>TERMINAL REPORT - PART A: COGNITIVE</h4>
-      <table class="g"><tr><th>Subject</th><th>1st Test 20</th><th>2nd Test 20</th><th>Exam 60</th><th>Total 100</th><th>Position</th><th>Grade</th><th>Remark</th></tr>
-      ${rep.subjects.map(r => `<tr><td>${r.subject}</td><td>${Number(r.test1_score)}</td><td>${Number(r.test2_score)}</td>
-        <td>${Number(r.exam_score)}</td><td>${Number(r.total)}</td><td>${r.pos}</td>
-        <td>${gradeOf(Number(r.total))}</td><td>${remark(Number(r.total))}</td></tr>`).join("")}
-      </table>
-      <p><b>Total Score:</b> ${total} &nbsp; <b>% Average:</b> ${avg.toFixed(2)} &nbsp; <b>Grade:</b> ${gradeOf(avg)} (${remark(avg)}) &nbsp; <b>Position:</b> ${rep.position} of ${rep.classSize}</p>
-      <h4>PART B: AFFECTIVE</h4>${grid(traits, "Traits")}
-      <h4>PART C: PSYCHOMOTOR</h4>${grid(motor, "Skills")}
-      <p>Class Teacher's Remark: ______________________________</p>
-      <p>Proprietress Remark: ______________________________</p>
-    </div>`;
+    out.innerHTML = cardHTML(st, rep, total, avg);
     loadStudents(st.class_name, st.id);
   } catch (err) {
     out.textContent = "Error: " + err.message;
