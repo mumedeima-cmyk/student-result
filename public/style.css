@@ -63,3 +63,9 @@ td:first-child, th:first-child { text-align: left; }
 .sbox, .kbox { border: 1px solid #333; padding: 8px; font-size: 12px; }
 .sbox p, .kbox p { margin: 6px 0; }
 @media print { .cardwrap { overflow: visible; } .rc { min-width: 0; } }
+.rc { grid-template-areas: "a b" "a k" "c s"; }
+.pa { grid-area: a; }
+.pb { grid-area: b; }
+.pk { grid-area: k; }
+.pc { grid-area: c; }
+.ps { grid-area: s; }

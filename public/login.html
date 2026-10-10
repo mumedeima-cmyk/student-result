@@ -22,6 +22,6 @@ document.getElementById("f").addEventListener("submit", async e => {
   const r = await fetch("/api/login", { method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username: document.getElementById("u").value, password: document.getElementById("p").value }) });
   const d = await r.json();
-  if (r.ok) location.href = "/"; else document.getElementById("msg").textContent = d.error;
+  if (r.ok) location.href = "/results.html"; else document.getElementById("msg").textContent = d.error;
 });
 </script></body></html>

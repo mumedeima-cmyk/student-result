@@ -1,29 +1,79 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
+<html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Report Card</title>
-<link rel="stylesheet" href="style.css">
-</head>
+<title>Nnero Foundation Academy</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;color:#222;line-height:1.6;scroll-behavior:smooth}
+header{background:#12285a;color:#fff;position:sticky;top:0;z-index:10}
+.bar{max-width:1000px;margin:auto;display:flex;align-items:center;justify-content:space-between;padding:12px 16px}
+.logo{font-weight:bold;font-size:18px}
+nav{display:flex;gap:18px;align-items:center}
+nav a{color:#fff;text-decoration:none;font-size:15px}
+nav a.btn{background:#f2b705;color:#12285a;padding:8px 14px;border-radius:6px;font-weight:bold}
+#menuBtn{display:none;background:none;border:1px solid #fff;color:#fff;font-size:22px;padding:2px 10px;border-radius:6px}
+.hero{background:#1c3d8f;color:#fff;text-align:center;padding:70px 16px}
+.hero h1{margin:0 0 10px;font-size:32px}
+.hero a{display:inline-block;margin:16px 6px 0;background:#f2b705;color:#12285a;padding:12px 22px;border-radius:6px;text-decoration:none;font-weight:bold}
+section{max-width:1000px;margin:auto;padding:40px 16px}
+h2{color:#12285a;border-bottom:3px solid #f2b705;display:inline-block;padding-bottom:4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.box{border:1px solid #ddd;border-radius:8px;padding:14px}
+.results{background:#eef2fb;max-width:none}
+.results>div{max-width:1000px;margin:auto}
+.results a{display:inline-block;background:#12285a;color:#fff;padding:12px 22px;border-radius:6px;text-decoration:none;font-weight:bold}
+footer{background:#12285a;color:#fff;text-align:center;padding:20px 16px;font-size:14px}
+@media(max-width:700px){
+#menuBtn{display:block}
+nav{display:none;position:absolute;top:100%;left:0;right:0;background:#12285a;flex-direction:column;padding:14px 16px;align-items:flex-start}
+nav.open{display:flex}
+.hero h1{font-size:26px}}
+</style></head>
 <body>
-<div class="container"><div class="noprint"><span id="who"></span><button id="logoutBtn" type="button">Log out</button><details id="adminBox" style="display:none"><summary>Add teacher (admin)</summary><input id="newUser" placeholder="Username"><input id="newPass" type="password" placeholder="Password (6+ characters)"><button id="addTeacherBtn" type="button">Add teacher</button><p id="teacherMsg"></p></details></div>
-<form id="resultForm" class="noprint">
-<h1>Enter Student Marks</h1><label>Select Class</label><select id="classPick"></select><label>Select Student</label><select id="studentPick"></select>
-<label>Name (Surname First)</label><input id="studentName" required>
-<label>Admission No</label><input id="admissionNumber" required>
-<label>Sex</label><select id="sex"><option>Male</option><option>Female</option></select>
-<label>Age</label><input id="age">
-<label>House</label><input id="house">
-<label>Class (type it the same way for every student)</label><input id="className" required>
-<label>Year</label><input id="year">
-<label>Next Term Begins</label><input id="nextBegins">
-<label>Next Term Ends</label><input id="nextEnds">
-<div id="subjects"></div>
-<button type="submit">Save and Show Report Card</button>
-</form>
-<div id="result"></div>
+<header><div class="bar">
+<div class="logo">Nnero Foundation Academy</div>
+<button id="menuBtn" aria-label="Menu">☰</button>
+<nav id="nav">
+<a href="#home">Home</a><a href="#about">About</a><a href="#academics">Academics</a>
+<a href="#admissions">Admissions</a><a href="#contact">Contact</a>
+<a class="btn" href="/results.html">Student Results</a>
+</nav></div></header>
+
+<div class="hero" id="home">
+<h1>Nnero Foundation Academy</h1>
+<p>Yenagoa, Bayelsa State</p>
+<a href="#admissions">Admissions</a><a href="/results.html">Student Results</a>
 </div>
-<script src="card.js"></script><script src="script.js"></script>
-</body>
-</html>
+
+<section id="about"><h2>About Us</h2>
+<p>Nnero Foundation Academy is a school in Yenagoa, Bayelsa State, committed to giving students a sound education and good character. (Edit this text with your school's story, mission and vision.)</p></section>
+
+<section id="academics"><h2>Academics</h2>
+<p>Our Junior Secondary School curriculum includes:</p>
+<div class="grid">
+<div class="box">English Language</div><div class="box">Mathematics</div><div class="box">Basic Science</div>
+<div class="box">Basic Technology</div><div class="box">Computer Studies</div><div class="box">Civic Education</div>
+<div class="box">Christian Religious Studies</div><div class="box">Creative &amp; Cultural Arts</div><div class="box">Home Economics</div>
+<div class="box">Business Studies</div><div class="box">Agricultural Science</div><div class="box">Physical &amp; Health Education</div>
+<div class="box">Social Studies</div><div class="box">Literature in English</div><div class="box">History</div><div class="box">French</div>
+</div></section>
+
+<section class="results"><div><h2>Student Results</h2>
+<p>Teachers can log in to enter, update and print student result sheets.</p>
+<a href="/results.html">Go to Student Results</a></div></section>
+
+<section id="admissions"><h2>Admissions</h2>
+<p>We welcome new students. Visit the school or call us to collect an admission form. (Edit this text with your admission requirements, dates and fees.)</p></section>
+
+<section id="contact"><h2>Contact Us</h2>
+<p><b>Address:</b> Nikton Road, Opposite Redeemed Christian Church by Express Kpansia, Yenagoa, Bayelsa State.</p>
+<p><b>Phone:</b> [Add phone number]</p>
+<p><b>Email:</b> [Add email address]</p></section>
+
+<footer>&copy; Nnero Foundation Academy. All rights reserved.</footer>
+<script>
+const nav = document.getElementById("nav");
+document.getElementById("menuBtn").onclick = () => nav.classList.toggle("open");
+nav.querySelectorAll("a").forEach(a => a.onclick = () => nav.classList.remove("open"));
+</script>
+</body></html>

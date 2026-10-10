@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Report Card</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container"><div class="noprint"><a href="/">← School website</a> <span id="who"></span><button id="logoutBtn" type="button">Log out</button><details id="adminBox" style="display:none"><summary>Add teacher (admin)</summary><input id="newUser" placeholder="Username"><input id="newPass" type="password" placeholder="Password (6+ characters)"><button id="addTeacherBtn" type="button">Add teacher</button><p id="teacherMsg"></p></details></div>
+<form id="resultForm" class="noprint">
+<h1>Enter Student Marks</h1><label>Select Class</label><select id="classPick"></select><label>Select Student</label><select id="studentPick"></select>
+<label>Name (Surname First)</label><input id="studentName" required>
+<label>Admission No</label><input id="admissionNumber" required>
+<label>Sex</label><select id="sex"><option>Male</option><option>Female</option></select>
+<label>Age</label><input id="age">
+<label>House</label><input id="house">
+<label>Class (type it the same way for every student)</label><input id="className" required>
+<label>Year</label><input id="year">
+<label>Next Term Begins</label><input id="nextBegins">
+<label>Next Term Ends</label><input id="nextEnds">
+<div id="subjects"></div>
+<button type="submit">Save and Show Report Card</button>
+</form>
+<div id="result"></div>
+</div>
+<script src="card.js"></script><script src="script.js"></script>
+</body>
+</html>
