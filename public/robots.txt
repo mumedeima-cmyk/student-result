@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 Disallow: /api/
-Sitemap: https://student-result-c479.onrender.com/sitemap.xml
+Sitemap: https://nnerofoundationacademy.onrender.com/sitemap.xml
