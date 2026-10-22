@@ -217,3 +217,13 @@ app.get("/api/report/:id", async (req, res) => {
         res.status(500).json({ error: "Unable to build report" });
     }
 });
+const fsG = require("fs");
+const pathG = require("path");
+app.get("/gallery-list", (req, res) => {
+  const list = (folder, re) => {
+    try {
+      return fsG.readdirSync(pathG.join(__dirname, "public", folder)).filter(f => re.test(f)).sort();
+    } catch (e) { return []; }
+  };
+  res.json({ images: list("images", /\.(jpe?g|png|webp|gif)$/i), videos: list("videos", /\.(mp4|webm)$/i) });
+});

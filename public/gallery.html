@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gallery - Nnero Foundation Academy</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;color:#222}
+header{background:#12285a;color:#fff}
+.bar{max-width:1000px;margin:auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:12px 16px;gap:10px}
+.bar a{color:#fff;text-decoration:none;margin-right:14px}
+.bar a.btn{background:#f2b705;color:#12285a;padding:8px 14px;border-radius:6px;font-weight:bold;margin:0}
+main{max-width:1000px;margin:auto;padding:24px 16px}
+h1,h2{color:#12285a}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.grid img{width:100%;height:150px;object-fit:cover;border-radius:6px;cursor:pointer}
+.vids{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+video{width:100%;border-radius:6px}
+#lb{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:50;align-items:center;justify-content:center}
+#lb img{max-width:96%;max-height:92%}
+</style></head>
+<body>
+<header><div class="bar"><div><a href="/">Home</a><a href="/#about">About</a><a href="/#academics">Academics</a><a href="/gallery.html">Gallery</a><a href="/#admissions">Admissions</a><a href="/#contact">Contact</a></div>
+<a class="btn" href="/results.html">Student Results</a></div></header>
+<main>
+<h1>Gallery</h1>
+<div class="grid" id="photos"></div>
+<h2 id="vh" style="display:none">Videos</h2>
+<div class="vids" id="vids"></div>
+<p id="empty" style="display:none">No photos yet. Please check back soon.</p>
+</main>
+<div id="lb" onclick="this.style.display='none'"><img id="big" alt=""></div>
+<script>
+fetch("/gallery-list").then(r => r.json()).then(d => {
+  document.getElementById("photos").innerHTML = d.images.map(f =>
+    '<img src="/images/' + encodeURIComponent(f) + '" alt="Nnero Foundation Academy photo" loading="lazy">').join("");
+  document.querySelectorAll("#photos img").forEach(i => i.onclick = () => {
+    document.getElementById("big").src = i.src;
+    document.getElementById("lb").style.display = "flex";
+  });
+  if (d.videos.length) {
+    document.getElementById("vh").style.display = "block";
+    document.getElementById("vids").innerHTML = d.videos.map(f =>
+      '<video controls preload="metadata" src="/videos/' + encodeURIComponent(f) + '"></video>').join("");
+  }
+  if (!d.images.length && !d.videos.length) document.getElementById("empty").style.display = "block";
+});
+</script>
+</body></html>
