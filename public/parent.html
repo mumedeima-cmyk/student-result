@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Parent Portal</title><link rel="stylesheet" href="style.css"></head>
+<body><div class="container">
+<div class="noprint"><a href="/">← School website</a> <span id="who"></span> <button id="out" type="button">Log out</button></div>
+<h1 class="noprint">Parent Portal</h1>
+<label class="noprint">Select child</label><select id="kid" class="noprint"></select>
+<div id="card"></div>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+const g = t => t >= 70 ? "A" : t >= 60 ? "B" : t >= 50 ? "C" : t >= 45 ? "D" : t >= 40 ? "E" : "F";
+const rm = t => t >= 70 ? "Excellent" : t >= 60 ? "Very Good" : t >= 50 ? "Good" : t >= 45 ? "Fair" : t >= 40 ? "Pass" : "Fail";
+let kids = [];
+async function show() {
+  const k = kids.find(x => String(x.id) === $("kid").value);
+  if (!k) { $("card").innerHTML = ""; return; }
+  const rep = await (await fetch("/api/report/" + k.id)).json();
+  if (!rep.subjects || !rep.subjects.length) { $("card").innerHTML = "<p>No results have been entered yet.</p>"; return; }
+  const total = rep.subjects.reduce((a, r) => a + Number(r.total), 0);
+  const avg = total / rep.subjects.length;
+  $("card").innerHTML = `
+  <button class="noprint" onclick="window.print()">Print / Save as PDF</button>
+  <div class="card">
+    <h2>NNERO FOUNDATION ACADEMY</h2>
+    <p class="c">Nikton Road, Opposite Redeemed Christian Church by Express Kpansia, Yenagoa Bayelsa State.</p>
+    <h3 class="c">CONTINUOUS ASSESSMENT REPORT</h3>
+    <p><b>Name:</b> ${k.name} &nbsp; <b>Admission No:</b> ${k.admission_number} &nbsp; <b>Class:</b> ${k.class_name}</p>
+    <div class="cardwrap"><table class="g" style="min-width:520px"><tr><th>Subject</th><th>1st Test 20</th><th>2nd Test 20</th><th>Exam 60</th><th>Total 100</th><th>Position</th><th>Grade</th><th>Remark</th></tr>
+    ${rep.subjects.map(r => `<tr><td>${r.subject}</td><td>${Number(r.test1_score)}</td><td>${Number(r.test2_score)}</td><td>${Number(r.exam_score)}</td><td>${Number(r.total)}</td><td>${r.pos}</td><td>${g(Number(r.total))}</td><td>${rm(Number(r.total))}</td></tr>`).join("")}
+    </table></div>
+    <p><b>Total Score:</b> ${total} &nbsp; <b>% Average:</b> ${avg.toFixed(2)} &nbsp; <b>Grade:</b> ${g(avg)} (${rm(avg)}) &nbsp; <b>Position:</b> ${rep.position} of ${rep.classSize}</p>
+  </div>`;
+}
+(async () => {
+  const me = await fetch("/api/me");
+  if (!me.ok) { location.href = "/login.html"; return; }
+  const u = await me.json();
+  $("who").textContent = "Logged in as " + u.username;
+  kids = await (await fetch("/api/my-children")).json();
+  if (!kids.length) { $("card").innerHTML = "<p>No students are linked to this account. Please contact the school.</p>"; return; }
+  $("kid").innerHTML = kids.map(k => `<option value="${k.id}">${k.name} (${k.class_name})</option>`).join("");
+  $("kid").onchange = show;
+  show();
+})();
+$("out").onclick = async () => { await fetch("/api/logout", { method: "POST" }); location.href = "/login.html"; };
+</script></body></html>

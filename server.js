@@ -227,3 +227,4 @@ app.get("/gallery-list", (req, res) => {
   };
   res.json({ images: list("images", /\.(jpe?g|png|webp|gif)$/i), videos: list("videos", /\.(mp4|webm)$/i) });
 });
+require("./parents")(app, pool);

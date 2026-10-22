@@ -114,6 +114,7 @@ loadSubjects().then(() => loadStudents());
   const r = await fetch("/api/me");
   if (!r.ok) { location.href = "/login.html"; return; }
   const me = await r.json();
+  if (me.role === "parent") { location.href = "/parent.html"; return; }
   $("who").textContent = "Logged in as " + me.username;
   if (me.role === "admin") $("adminBox").style.display = "block";
 })();
@@ -128,3 +129,10 @@ $("addTeacherBtn").onclick = async () => {
 $("newPass").insertAdjacentHTML("afterend",
   '<label style="font-size:13px"><input type="checkbox" id="showNew" style="width:auto"> Show password</label>');
 $("showNew").onchange = () => { $("newPass").type = $("showNew").checked ? "text" : "password"; };
+$("addParentBtn").onclick = async () => {
+  const r = await fetch("/api/parents", { method: "POST", headers: J,
+    body: JSON.stringify({ username: $("pUser").value, password: $("pPass").value, admissions: $("pAdm").value }) });
+  const d = await r.json();
+  $("parentMsg").textContent = r.ok ? "Parent added" : d.error;
+  if (r.ok) { $("pUser").value = ""; $("pPass").value = ""; $("pAdm").value = ""; }
+};

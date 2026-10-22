@@ -38,10 +38,19 @@ module.exports = function (app) {
 
   app.post("/api/logout", (req, res) => { res.clearCookie("token"); res.json({ ok: true }); });
 
-  app.use("/api", (req, res, next) => {
+  app.use("/api", async (req, res, next) => {
     const user = who(req);
     if (!user) return res.status(401).json({ error: "Please log in" });
     req.user = user;
+    if (user.role === "parent") {
+      const ok = req.method === "GET" && (req.path === "/me" || req.path === "/my-children" || /^\/report\/\d+$/.test(req.path));
+      if (!ok) return res.status(403).json({ error: "Not allowed" });
+      const m = req.path.match(/^\/report\/(\d+)$/);
+      if (m) {
+        const r = await pool.query("SELECT 1 FROM parent_students WHERE parent_id = $1 AND student_id = $2", [user.id, m[1]]);
+        if (!r.rowCount) return res.status(403).json({ error: "Not allowed" });
+      }
+    }
     next();
   });
 
