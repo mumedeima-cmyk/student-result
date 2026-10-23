@@ -20,7 +20,7 @@ function grid(list, title) {
 
 async function loadSubjects(section) {
   subjects = await (await fetch("/api/section-subjects/" + section)).json();
-  $("subjects").innerHTML = `<p style="font-size:13px">Senior secondary: leave blank the subjects the student does not take.</p>` +
+  $("subjects").innerHTML = `<p style="font-size:13px">Leave blank any subject the student does not take.</p>` +
     `<table class="in"><tr><th>Subject</th><th>1st /20</th><th>2nd /20</th><th>Exam /60</th></tr>` +
     subjects.map(s => `<tr><td>${s.name}</td>
       <td><input type="number" id="t1-${s.id}" min="0" max="20"></td>
@@ -89,10 +89,7 @@ $("resultForm").addEventListener("submit", async (e) => {
     const entries = [];
     for (const s of subjects) {
       const a = $("t1-" + s.id).value, b = $("t2-" + s.id).value, c = $("ex-" + s.id).value;
-      const n = [a, b, c].filter(v => v !== "").length;
-      if (n === 3) entries.push({ s, a: Number(a), b: Number(b), c: Number(c) });
-      else if (n > 0) throw new Error("Complete all three marks for " + s.name);
-      else if (section !== "senior") throw new Error("Please fill in " + s.name);
+      if ([a, b, c].some(v => v !== "")) entries.push({ s, a: Number(a || 0), b: Number(b || 0), c: Number(c || 0) });
     }
     if (!entries.length) throw new Error("Enter marks for at least one subject");
 
