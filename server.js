@@ -251,3 +251,25 @@ app.post("/api/student-save", async (req, res) => {
     res.json(r.rows[0]);
   } catch (e) { res.status(400).json({ error: "Could not save student" }); }
 });
+app.get("/api/extras/:id", async (req, res) => {
+  try {
+    const r = await pool.query(
+      "SELECT affective, psychomotor, teacher_remark, proprietress_remark FROM report_extras WHERE student_id = $1", [req.params.id]);
+    res.json(r.rows[0] || { affective: {}, psychomotor: {}, teacher_remark: "", proprietress_remark: "" });
+  } catch (e) { res.status(500).json({ error: "Could not load ratings" }); }
+});
+
+app.post("/api/extras/:id", async (req, res) => {
+  const b = req.body || {};
+  try {
+    await pool.query(
+      `INSERT INTO report_extras (student_id, affective, psychomotor, teacher_remark, proprietress_remark)
+       VALUES ($1,$2,$3,$4,$5)
+       ON CONFLICT (student_id) DO UPDATE SET
+         affective = EXCLUDED.affective, psychomotor = EXCLUDED.psychomotor,
+         teacher_remark = EXCLUDED.teacher_remark, proprietress_remark = EXCLUDED.proprietress_remark`,
+      [req.params.id, JSON.stringify(b.affective || {}), JSON.stringify(b.psychomotor || {}),
+       String(b.teacher_remark || ""), String(b.proprietress_remark || "")]);
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ error: "Could not save" }); }
+});

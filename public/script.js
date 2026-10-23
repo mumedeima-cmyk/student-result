@@ -107,7 +107,7 @@ $("resultForm").addEventListener("submit", async (e) => {
     const rep = await (await fetch("/api/report/" + st.id)).json();
     const total = rep.subjects.reduce((a, r) => a + Number(r.total), 0);
     const avg = total / rep.subjects.length;
-    out.innerHTML = cardHTML(st, rep, total, avg);
+    const ex = await (await fetch("/api/extras/" + st.id)).json(); out.innerHTML = cardHTML(st, rep, total, avg, ex);
     loadStudents(st.class_name, st.id);
   } catch (err) {
     out.textContent = "Error: " + err.message;

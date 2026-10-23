@@ -69,3 +69,7 @@ td:first-child, th:first-child { text-align: left; }
 .pk { grid-area: k; }
 .pc { grid-area: c; }
 .ps { grid-area: s; }
+.rate { cursor: pointer; text-align: center; min-width: 22px; height: 22px; }
+.rate.on { background: #d9e8ff; font-weight: bold; }
+.remark { width: 100%; border: 1px solid #999; font-family: inherit; font-size: 12px; padding: 4px; }
+@media print { .remark { border: none; resize: none; } .rate { cursor: default; } }
