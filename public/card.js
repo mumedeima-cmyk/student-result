@@ -7,7 +7,7 @@ function cardHTML(st, rep, total, avg) {
   <div class="card">
     <h2>NNERO FOUNDATION ACADEMY</h2>
     <p class="c">Nikton Road, Opposite Redeemed Christian Church by Express Kpansia, Yenagoa Bayelsa State.</p>
-    <h3 class="c">CONTINUOUS ASSESSMENT REPORT FOR JUNIOR SECONDARY SCHOOL</h3>
+    <h3 class="c">${titleOf(st.section)}</h3>
     <p><b>Name:</b> ${st.name} &nbsp; <b>House:</b> ${$("house").value}</p>
     <p><b>Admission No:</b> ${st.admission_number} &nbsp; <b>Sex:</b> ${$("sex").value} &nbsp; <b>Age:</b> ${$("age").value}</p>
     <p><b>Class:</b> ${st.class_name} &nbsp; <b>Year:</b> ${$("year").value}</p>
@@ -43,4 +43,8 @@ function cardHTML(st, rep, total, avg) {
       </div>
     </div></div>
   </div>`;
+}
+function titleOf(sec) {
+  const t = { nursery: "NURSERY SCHOOL", primary: "PRIMARY SCHOOL", junior: "JUNIOR SECONDARY SCHOOL", senior: "SENIOR SECONDARY SCHOOL" };
+  return "CONTINUOUS ASSESSMENT REPORT FOR " + (t[sec] || t.junior);
 }

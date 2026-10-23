@@ -18,13 +18,14 @@ function grid(list, title) {
     `</table>`;
 }
 
-async function loadSubjects() {
-  subjects = await (await fetch("/api/subjects")).json();
-  $("subjects").innerHTML = `<table class="in"><tr><th>Subject</th><th>1st /20</th><th>2nd /20</th><th>Exam /60</th></tr>` +
+async function loadSubjects(section) {
+  subjects = await (await fetch("/api/section-subjects/" + section)).json();
+  $("subjects").innerHTML = `<p style="font-size:13px">Senior secondary: leave blank the subjects the student does not take.</p>` +
+    `<table class="in"><tr><th>Subject</th><th>1st /20</th><th>2nd /20</th><th>Exam /60</th></tr>` +
     subjects.map(s => `<tr><td>${s.name}</td>
-      <td><input type="number" id="t1-${s.id}" min="0" max="20" required></td>
-      <td><input type="number" id="t2-${s.id}" min="0" max="20" required></td>
-      <td><input type="number" id="ex-${s.id}" min="0" max="60" required></td></tr>`).join("") + `</table>`;
+      <td><input type="number" id="t1-${s.id}" min="0" max="20"></td>
+      <td><input type="number" id="t2-${s.id}" min="0" max="20"></td>
+      <td><input type="number" id="ex-${s.id}" min="0" max="60"></td></tr>`).join("") + `</table>`;
 }
 
 async function loadStudents(keepClass, keepId) {
@@ -50,6 +51,8 @@ function clearForm() {
   $("result").innerHTML = "";
 }
 
+$("section").addEventListener("change", () => loadSubjects($("section").value));
+
 $("classPick").addEventListener("change", () => {
   fillStudents();
   clearForm();
@@ -65,6 +68,8 @@ $("studentPick").addEventListener("change", async () => {
   $("admissionNumber").value = st.admission_number;
   $("className").value = st.class_name;
   if (st.gender) $("sex").value = st.gender;
+  $("section").value = st.section || "junior";
+  await loadSubjects($("section").value);
   const rep = await (await fetch("/api/report/" + id)).json();
   rep.subjects.forEach(r => {
     const s = subjects.find(x => x.name === r.subject);
@@ -80,28 +85,31 @@ $("resultForm").addEventListener("submit", async (e) => {
   const out = $("result");
   out.textContent = "Saving...";
   try {
-    const admission_number = $("admissionNumber").value.trim();
-    const all = await (await fetch("/api/students")).json();
-    let st = all.find(s => s.admission_number === admission_number);
-    if (!st) {
-      const r = await fetch("/api/students", { method: "POST", headers: J,
-        body: JSON.stringify({ admission_number, name: $("studentName").value.trim(),
-          gender: $("sex").value, class_name: $("className").value.trim(), arm: null }) });
-      if (!r.ok) throw new Error("Could not create student");
-      st = await r.json();
-    }
+    const section = $("section").value;
+    const entries = [];
     for (const s of subjects) {
+      const a = $("t1-" + s.id).value, b = $("t2-" + s.id).value, c = $("ex-" + s.id).value;
+      const n = [a, b, c].filter(v => v !== "").length;
+      if (n === 3) entries.push({ s, a: Number(a), b: Number(b), c: Number(c) });
+      else if (n > 0) throw new Error("Complete all three marks for " + s.name);
+      else if (section !== "senior") throw new Error("Please fill in " + s.name);
+    }
+    if (!entries.length) throw new Error("Enter marks for at least one subject");
+
+    const sr = await fetch("/api/student-save", { method: "POST", headers: J, body: JSON.stringify({
+      admission_number: $("admissionNumber").value.trim(), name: $("studentName").value.trim(),
+      gender: $("sex").value, class_name: $("className").value.trim(), section }) });
+    if (!sr.ok) throw new Error((await sr.json()).error);
+    const st = await sr.json();
+
+    for (const x of entries) {
       const r = await fetch("/api/marks", { method: "POST", headers: J, body: JSON.stringify({
-        student_id: st.id, subject_id: s.id,
-        test1_score: Number($("t1-" + s.id).value),
-        test2_score: Number($("t2-" + s.id).value),
-        exam_score: Number($("ex-" + s.id).value) }) });
+        student_id: st.id, subject_id: x.s.id, test1_score: x.a, test2_score: x.b, exam_score: x.c }) });
       if (!r.ok) throw new Error((await r.json()).error);
     }
     const rep = await (await fetch("/api/report/" + st.id)).json();
     const total = rep.subjects.reduce((a, r) => a + Number(r.total), 0);
     const avg = total / rep.subjects.length;
-
     out.innerHTML = cardHTML(st, rep, total, avg);
     loadStudents(st.class_name, st.id);
   } catch (err) {
@@ -109,7 +117,6 @@ $("resultForm").addEventListener("submit", async (e) => {
   }
 });
 
-loadSubjects().then(() => loadStudents());
 (async () => {
   const r = await fetch("/api/me");
   if (!r.ok) { location.href = "/login.html"; return; }
@@ -126,9 +133,6 @@ $("addTeacherBtn").onclick = async () => {
   $("teacherMsg").textContent = r.ok ? "Teacher added" : d.error;
   if (r.ok) { $("newUser").value = ""; $("newPass").value = ""; }
 };
-$("newPass").insertAdjacentHTML("afterend",
-  '<label style="font-size:13px"><input type="checkbox" id="showNew" style="width:auto"> Show password</label>');
-$("showNew").onchange = () => { $("newPass").type = $("showNew").checked ? "text" : "password"; };
 $("addParentBtn").onclick = async () => {
   const r = await fetch("/api/parents", { method: "POST", headers: J,
     body: JSON.stringify({ username: $("pUser").value, password: $("pPass").value, admissions: $("pAdm").value }) });
@@ -136,3 +140,8 @@ $("addParentBtn").onclick = async () => {
   $("parentMsg").textContent = r.ok ? "Parent added" : d.error;
   if (r.ok) { $("pUser").value = ""; $("pPass").value = ""; $("pAdm").value = ""; }
 };
+$("newPass").insertAdjacentHTML("afterend",
+  '<label style="font-size:13px"><input type="checkbox" id="showNew" style="width:auto"> Show password</label>');
+$("showNew").onchange = () => { $("newPass").type = $("showNew").checked ? "text" : "password"; };
+
+loadSubjects($("section").value).then(() => loadStudents());

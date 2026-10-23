@@ -228,3 +228,26 @@ app.get("/gallery-list", (req, res) => {
   res.json({ images: list("images", /\.(jpe?g|png|webp|gif)$/i), videos: list("videos", /\.(mp4|webm)$/i) });
 });
 require("./parents")(app, pool);
+app.get("/api/section-subjects/:section", async (req, res) => {
+  try {
+    const r = await pool.query("SELECT * FROM subjects WHERE section = $1 ORDER BY id", [req.params.section]);
+    res.json(r.rows);
+  } catch (e) { res.status(500).json({ error: "Unable to retrieve subjects" }); }
+});
+
+app.post("/api/student-save", async (req, res) => {
+  const { admission_number, name, gender, class_name, section } = req.body || {};
+  if (!admission_number || !name || !class_name)
+    return res.status(400).json({ error: "Name, admission number and class are needed" });
+  try {
+    const r = await pool.query(
+      `INSERT INTO students (admission_number, name, gender, class_name, section)
+       VALUES ($1,$2,$3,$4,$5)
+       ON CONFLICT (admission_number) DO UPDATE SET
+         name = EXCLUDED.name, gender = EXCLUDED.gender,
+         class_name = EXCLUDED.class_name, section = EXCLUDED.section
+       RETURNING *`,
+      [admission_number, name, gender || null, class_name, section || "junior"]);
+    res.json(r.rows[0]);
+  } catch (e) { res.status(400).json({ error: "Could not save student" }); }
+});
