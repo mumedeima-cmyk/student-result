@@ -142,3 +142,13 @@ $("newPass").insertAdjacentHTML("afterend",
 $("showNew").onchange = () => { $("newPass").type = $("showNew").checked ? "text" : "password"; };
 
 loadSubjects($("section").value).then(() => loadStudents());
+$("delStudentBtn").onclick = async () => {
+  const id = $("studentPick").value;
+  if (!id) { $("delMsg").textContent = "Select a student first"; return; }
+  const st = allStudents.find(x => String(x.id) === id);
+  if (!confirm("Delete " + st.name + " and ALL their marks, ratings and parent links? This cannot be undone.")) return;
+  const r = await fetch("/api/students/" + id, { method: "DELETE" });
+  const d = await r.json();
+  $("delMsg").textContent = r.ok ? "Deleted" : d.error;
+  if (r.ok) { clearForm(); await loadStudents($("classPick").value); }
+};

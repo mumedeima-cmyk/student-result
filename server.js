@@ -273,3 +273,18 @@ app.post("/api/extras/:id", async (req, res) => {
     res.json({ ok: true });
   } catch (e) { res.status(500).json({ error: "Could not save" }); }
 });
+app.delete("/api/marks/:studentId/:subjectId", async (req, res) => {
+  try {
+    await pool.query("DELETE FROM scores WHERE student_id = $1 AND subject_id = $2",
+      [req.params.studentId, req.params.subjectId]);
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ error: "Could not remove marks" }); }
+});
+
+app.delete("/api/students/:id", async (req, res) => {
+  if (req.user.role !== "admin") return res.status(403).json({ error: "Admins only" });
+  try {
+    await pool.query("DELETE FROM students WHERE id = $1", [req.params.id]);
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ error: "Could not delete student" }); }
+});
